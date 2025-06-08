@@ -1,7 +1,9 @@
 // app.ts
 import express from "express";
 import { connectInMemoryDB } from "./db";
-import { User } from "./models/User";
+import bugRoutes from "./routes/BugRoutes";
+import projectRoutes from "./routes/ProjectRoutes";
+import userRoutes from "./routes/UserRoutes";
 
 const app = express();
 app.use(express.json());
@@ -9,21 +11,9 @@ app.use(express.json());
 // Connect to in-memory DB
 connectInMemoryDB();
 
-// Routes
-app.post("/users", async (req, res) => {
-  try {
-    const user = new User(req.body);
-    await user.save();
-    res.status(201).send(user);
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
-
-app.get("/users", async (_req, res) => {
-  const users = await User.find();
-  res.send(users);
-});
+app.use("/api/bugs", bugRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/users", userRoutes);
 
 // Start server
 const PORT = 4000;
